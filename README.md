@@ -1,34 +1,29 @@
-```markdown
-# Privacy-Preserving Traffic Monitoring System 🚦🔒
+# Privacy-Preserving Traffic Monitoring Using Machine Learning Analytics
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![SUMO Required](https://img.shields.io/badge/SUMO-1.18.0-orange)](https://www.eclipse.org/sumo/)
+## Overview
 
-A Flask-based web application that simulates, analyzes, and visualizes urban traffic while preserving privacy through geo-indistinguishability techniques. Designed specifically for Rajpath, Delhi with real-time SUMO simulations.
+This project is a **Flask-based web application** integrated with **SUMO (Simulation of Urban Mobility)** to simulate, process, and visualize real-time traffic data in **Rajpath, Delhi**, while ensuring privacy using **geo-indistinguishability** techniques. The system visualizes traffic data on **OpenStreetMap**, predicts congestion using **machine learning**, and differentiates views for public users and traffic authorities.
 
-![System Overview](static/images/system-overview.png)
+---
 
-## Key Features ✨
+## Features
 
-### Privacy & Security
-- 🔒 Geo-indistinguishability with Laplace noise
-- 👥 Dual-view architecture (Public vs Authority)
-- 🛡️ Secure authentication for sensitive data
+- 🔁 **Live SUMO Traffic Simulation**: Vehicle data is generated dynamically using SUMO and TraCI.
+- 🔒 **Privacy-Preserving Mechanism**: Applies geo-indistinguishability to anonymize coordinates in the processed dataset.
+- 🤖 **ML-Based Congestion Prediction**: Predicts congestion severity from traffic stats using trained ML models.
+- 🗺️ **Interactive Map (User View)**: Displays predicted congestion levels via route coloring.
+- 👮 **Authority View with Login**: Access to raw traffic data during abnormal congestion events.
+- ⚠️ **Manual Accident Trigger**: Button to simulate an accident and test system response.
+- 🌐 **Dual View Architecture**:
+  - **Public View**: Shows anonymized, ML-predicted congestion levels.
+  - **Authority View**: Shows raw, non-anonymized data with detailed info.
 
-### Traffic Intelligence
-- 🤖 ML-powered congestion prediction (Random Forest)
-- 🚦 Real-time traffic simulation (SUMO/TraCI)
-- 🗺️ Interactive OpenStreetMap visualization
+---
 
-### Simulation Capabilities
-- 🚗 Multi-vehicle type simulation (cars, trucks, motorcycles)
-- ⚠️ On-demand accident triggering
-- 📊 Comprehensive data collection pipeline
+## Project Structure
 
-## Project Structure 🗂️
+```
 
-```text
 Traffic_Monitoring_System/
 ├── app/                        # Application core
 │   ├── data_processing/        # Data transformation modules

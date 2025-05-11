@@ -141,5 +141,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 **Muhammed Yazeen S**  
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://linkedin.com/in/muhammedyazeens)
 [![Email](https://img.shields.io/badge/Email-Contact%20Me-red)](mailto:muhammedyazeen77@gmail.com)
-
-```

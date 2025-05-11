@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Monitoring</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; }
+        #map { width: 100%; height: 80vh; }
+        #controls, #loginStatus { text-align: center; margin: 10px; }
+        #loginPopup {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background: white; padding: 20px;
+            border: 1px solid black; box-shadow: 2px 2px 10px gray; z-index: 1000;
+        }
+        #authorityTable { width: 90%; margin: 10px auto; border-collapse: collapse; display: none; }
+        #authorityTable th, #authorityTable td { border: 1px solid black; padding: 8px; text-align: center; }
+        #authorityTable th { background-color: #f2f2f2; }
+        .legend {
+            position: absolute; bottom: 10px; left: 10px;
+            background: white; padding: 10px; border: 1px solid black;
+            font-size: 14px; line-height: 18px; z-index: 1000;
+        }
+        .legend div { margin-bottom: 5px; }
+        .legend span {
+            display: inline-block; width: 20px; height: 10px; margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">Live Traffic Monitoring</h2>
+    <div id="loginStatus">
+        <span id="userStatus">Checking login status...</span>
+        <button id="authButton">Login</button>
+    </div>
+    <div id="map"></div>
+    <div id="controls">
+        <button id="triggerAccident">Trigger Accident</button>
+    </div>
+    <table id="authorityTable">
+        <thead>
+            <tr>
+                <th>Vehicle_ID</th><th>Latitude</th><th>Longitude</th>
+                <th>Vehicle Count</th><th>Speed (km/h)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="loginPopup">
+        <h3>Login</h3>
+        <input type="text" id="username" placeholder="Username"><br><br>
+        <input type="password" id="password" placeholder="Password"><br><br>
+        <button id="loginSubmit">Login</button>
+        <button onclick="$('#loginPopup').hide()">Cancel</button>
+    </div>
+    <div class="legend">
+        <div><span style="background:green;"></span>Low Congestion</div>
+        <div><span style="background:orange;"></span>Medium Congestion</div>
+        <div><span style="background:red;"></span>High Congestion</div>
+        <div><span style="background:blue;"></span>Vehicle Marker (Authority View)</div>
+    </div>
+    <script>
+        var map = L.map('map').setView([28.6144, 77.2024], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        var routeLayer = L.layerGroup().addTo(map);
+        var vehicleLayer = L.layerGroup().addTo(map);
+        var accidentMode = false;
+        var isAuthority = false;
+
+        function checkLoginStatus() {
+            $.get("/check_login", function(response) {
+                isAuthority = response.logged_in;
+                $("#userStatus").text(isAuthority ? "Logged in as Authority" : "Public View");
+                $("#authButton").text(isAuthority ? "Logout" : "Login");
+                $("#authorityTable").toggle(isAuthority);
+                fetchTrafficData();
+            });
+        }
+
+        function fetchTrafficData() {
+            let apiUrl = isAuthority ? "/authority" : "/traffic";
+            $.getJSON(apiUrl, function(data) {
+                routeLayer.clearLayers();
+                vehicleLayer.clearLayers();
+                $("#authorityTable tbody").empty();
+                if (isAuthority) {
+                    data.forEach(function(vehicle) {
+                        var marker = L.circleMarker([vehicle.lat, vehicle.lon], {
+                            radius: 6, color: "blue", fillOpacity: 0.8
+                        }).bindPopup(`Vehicle ID: ${vehicle.vehicle_id}<br>Speed: ${vehicle.speed.toFixed(2)} km/h<br>Location: (${vehicle.lat.toFixed(5)}, ${vehicle.lon.toFixed(5)})`);
+                        marker.addTo(vehicleLayer);
+                        $("#authorityTable tbody").append(`
+                            <tr>
+                                <td>${vehicle.vehicle_id}</td>
+                                <td>${vehicle.lat.toFixed(5)}</td>
+                                <td>${vehicle.lon.toFixed(5)}</td>
+                                <td>${vehicle.vehicle_count}</td>
+                                <td>${vehicle.speed.toFixed(2)}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    data.forEach(function(route) {
+                        let coords = [[route.lat_start, route.lon_start], [route.lat_end, route.lon_end]];
+                        let color = route.congestion_level === 'High' ? 'red' : 
+                                    (route.congestion_level === 'Medium' ? 'orange' : 'green');
+                        L.polyline(coords, {color: color, weight: 5, opacity: 0.8}).addTo(routeLayer);
+                    });
+                }
+            });
+        }
+
+        checkLoginStatus();
+        setInterval(fetchTrafficData, 5000);
+        setTimeout(() => { map.invalidateSize(); }, 500);
+
+        $("#authButton").click(function () {
+            if (isAuthority) {
+                $.post("/logout", function() { checkLoginStatus(); });
+            } else {
+                $("#loginPopup").show();
+            }
+        });
+
+        $("#loginSubmit").click(function () {
+            $.ajax({
+                url: "/login", type: "POST", contentType: "application/json",
+                data: JSON.stringify({
+                    username: $("#username").val(), password: $("#password").val()
+                }),
+                success: function (response) {
+                    alert("Login successful!");
+                    $("#loginPopup").hide();
+                    checkLoginStatus();
+                },
+                error: function (xhr) {
+                    alert("Login failed: " + xhr.responseText);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

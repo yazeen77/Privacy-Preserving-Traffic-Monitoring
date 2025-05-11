@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+    margin-top: 20px;
+}
+
+#map {
+    width: 90%;
+    height: 80vh;
+    margin: auto;
+    border: 2px solid #333;
+    border-radius: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#prediction {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    margin: 10px;
+}
+img {
+    width: 20px; /* Adjust icon size */
+    height: auto;
+}

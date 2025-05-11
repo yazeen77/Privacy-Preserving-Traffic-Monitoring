@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Traffic View</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #map { height: 500px; }
+    </style>
+</head>
+<body>
+    <h2>Authority Traffic Monitoring</h2>
+    <button onclick="window.location='/logout'">Logout</button>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([8.979504, 76.707627], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        var trafficLayer = L.layerGroup().addTo(map);
+
+        function fetchTrafficData() {
+            $.getJSON('/authority', function(data) {
+                trafficLayer.clearLayers();
+                data.forEach(function(point) {
+                    L.circleMarker([point.lat, point.lon], {
+                        radius: 6,
+                        color: "blue",
+                        fillOpacity: 0.8
+                    }).addTo(trafficLayer);
+                });
+            });
+        }
+        fetchTrafficData();
+        setInterval(fetchTrafficData, 5000);
+    </script>
+</body>
+</html>

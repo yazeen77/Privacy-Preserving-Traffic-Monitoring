@@ -1,0 +1,22 @@
+# Core Requirements
+flask==2.3.2
+flask-cors==4.0.0
+pandas==2.0.3
+numpy==1.24.4
+scikit-learn==1.3.0
+imbalanced-learn==0.10.1
+joblib==1.3.2
+utm==0.7.0
+python-dotenv==1.0.0
+
+# SUMO/TraCI Requirements
+traci==1.18.0
+libsumo==1.18.0
+
+# XML Processing
+lxml==4.9.3
+
+# Development
+pytest==7.4.0
+black==23.9.1
+flake8==6.1.0

@@ -13,8 +13,6 @@ This project is a **Flask-based web application** integrated with **SUMO (Simula
 - 🔁 **Live SUMO Traffic Simulation**: Vehicle data is generated dynamically using SUMO and TraCI.
 ![Screenshot 2025-03-27 005237](https://github.com/user-attachments/assets/f0211bfe-2da1-4afd-8611-cd84b09cc954)
 - 🔒 **Privacy-Preserving Mechanism**: Applies geo-indistinguishability to anonymize coordinates in the processed dataset.
-![Screenshot 2025-03-24 015100](https://github.com/user-attachments/assets/367a2806-23dd-4bae-80d3-95538d033e0b)
-
 - 🤖 **ML-Based Congestion Prediction**: Predicts congestion severity from traffic stats using trained ML models.
 - 🗺️ **Interactive Map (User View)**: Displays predicted congestion levels via route coloring.
 ![Screenshot 2025-03-27 005311](https://github.com/user-attachments/assets/73a040a7-2311-40be-be4e-f5614520c02c)
